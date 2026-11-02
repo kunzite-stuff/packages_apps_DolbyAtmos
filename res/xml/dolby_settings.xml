@@ -12,27 +12,26 @@
         android:key="dolby_enable"
         android:title="@string/dolby_enable" />
 
-    <ListPreference
+    <co.aospa.dolby.preference.DolbyProfilePreference
         android:key="dolby_profile"
         android:entries="@array/dolby_profile_entries"
         android:entryValues="@array/dolby_profile_values"
         android:defaultValue="0"
         android:title="@string/dolby_profile_title"
-        android:summary="%s"
-        android:icon="@drawable/ic_dolby" />
+        android:summary="%s" />
 
-    <PreferenceCategory
-        android:key="dolby_category_settings"
-        android:title="@string/dolby_category_settings">
+    <co.aospa.dolby.preference.DolbyCategoryPreference
+        android:key="dolby_category_eq"
+        android:title="@string/dolby_category_eq">
 
-        <Preference
+        <co.aospa.dolby.preference.DolbyGeqPreference
             android:key="dolby_preset"
             android:title="@string/dolby_preset">
             <intent
                 android:action="android.intent.action.MAIN"
                 android:targetPackage="co.aospa.dolby"
                 android:targetClass="co.aospa.dolby.geq.EqualizerActivity" />
-        </Preference>
+        </co.aospa.dolby.preference.DolbyGeqPreference>
 
         <co.aospa.dolby.preference.DolbyIeqPreference
             android:key="dolby_ieq"
@@ -40,22 +39,17 @@
             android:entryValues="@array/dolby_ieq_values"
             android:title="@string/dolby_ieq" />
 
+    </co.aospa.dolby.preference.DolbyCategoryPreference>
+
+    <co.aospa.dolby.preference.DolbyCategoryPreference
+        android:key="dolby_category_audio"
+        android:title="@string/dolby_category_audio">
+
         <SwitchPreferenceCompat
             android:key="dolby_spk_virtualizer"
             android:title="@string/dolby_spk_virtualizer" />
 
-        <SwitchPreferenceCompat
-            android:key="dolby_virtualizer"
-            android:title="@string/dolby_hp_virtualizer" />
-
-        <ListPreference
-            android:key="dolby_stereo"
-            android:entries="@array/dolby_stereo_entries"
-            android:entryValues="@array/dolby_stereo_values"
-            android:title="@string/dolby_stereo_widening"
-            android:dependency="dolby_virtualizer" />
-
-        <ListPreference
+        <co.aospa.dolby.preference.DolbyLevelPreference
             android:key="dolby_dialogue"
             android:entries="@array/dolby_dialogue_entries"
             android:entryValues="@array/dolby_dialogue_values"
@@ -69,8 +63,31 @@
             android:key="dolby_volume"
             android:title="@string/dolby_volume_leveler" />
 
-        <Preference
+    </co.aospa.dolby.preference.DolbyCategoryPreference>
+
+    <co.aospa.dolby.preference.DolbyCategoryPreference
+        android:key="dolby_category_headphones"
+        android:title="@string/dolby_category_headphones">
+
+        <SwitchPreferenceCompat
+            android:key="dolby_virtualizer"
+            android:title="@string/dolby_hp_virtualizer" />
+
+        <co.aospa.dolby.preference.DolbyLevelPreference
+            android:key="dolby_stereo"
+            android:entries="@array/dolby_stereo_entries"
+            android:entryValues="@array/dolby_stereo_values"
+            android:title="@string/dolby_stereo_widening"
+            android:dependency="dolby_virtualizer" />
+
+    </co.aospa.dolby.preference.DolbyCategoryPreference>
+
+    <PreferenceCategory
+        android:key="dolby_category_reset">
+
+        <co.aospa.dolby.preference.DolbyResetPreference
             android:key="dolby_reset"
+            android:icon="@drawable/reset_settings_24px"
             android:title="@string/dolby_reset_profile" />
 
     </PreferenceCategory>

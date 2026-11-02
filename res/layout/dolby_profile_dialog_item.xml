@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2024 Paranoid Android
+     SPDX-License-Identifier: Apache-2.0
+-->
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:paddingTop="2dp"
+    android:paddingBottom="2dp">
+
+    <LinearLayout
+        android:id="@+id/profile_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="52dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp">
+
+        <ImageView
+            android:id="@+id/profile_row_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="16dp"
+            android:importantForAccessibility="no" />
+
+        <TextView
+            android:id="@+id/profile_row_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAppearance="?android:attr/textAppearanceListItem" />
+
+        <ImageView
+            android:id="@+id/profile_row_check"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:importantForAccessibility="no"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</FrameLayout>

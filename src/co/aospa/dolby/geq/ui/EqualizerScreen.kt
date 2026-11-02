@@ -21,10 +21,15 @@ import com.android.settingslib.spa.framework.theme.settingsBackground
 @Composable
 fun EqualizerScreen(viewModel: EqualizerViewModel, modifier: Modifier = Modifier) {
     Surface(
-        modifier = Modifier.fillMaxSize().padding(SettingsDimension.itemPadding).then(modifier),
+        modifier = Modifier.fillMaxSize().then(modifier),
         color = MaterialTheme.colorScheme.settingsBackground,
     ) {
-        Column(verticalArrangement = Arrangement.Top, modifier = Modifier.fillMaxHeight()) {
+        // The padding lives inside the surface so content aligned to the very edge
+        // (see PresetSelector) is not clipped by it.
+        Column(
+            verticalArrangement = Arrangement.Top,
+            modifier = Modifier.fillMaxHeight().padding(SettingsDimension.itemPadding),
+        ) {
             PresetSelector(viewModel = viewModel)
             EqualizerBands(viewModel = viewModel)
         }

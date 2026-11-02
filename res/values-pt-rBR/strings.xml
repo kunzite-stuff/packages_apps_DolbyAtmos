@@ -1,71 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2023-24 Paranoid Android
-     SPDX-License-Identifier: Apache-2.0
+    Copyright (C) 2023-24 Paranoid Android
+    SPDX-License-Identifier: Apache-2.0
 -->
 <resources>
 
     <!-- Dolby Atmos -->
     <string name="dolby_title">Dolby Atmos</string>
-    <string name="dolby_enable">Usar Dolby Atmos</string>
-    <string name="dolby_profile_title">Escolher um perfil</string>
+    <string name="dolby_enable">Ativar Dolby Atmos</string>
+    <string name="dolby_profile_title">Perfil de áudio</string>
     <string name="dolby_preset">Equalizador gráfico</string>
-    <string name="dolby_off">Desligado</string>
-    <string name="dolby_on">Ligado</string>
+    <string name="dolby_off">Desativado</string>
+    <string name="dolby_on">Ativado</string>
     <string name="dolby_low">Baixo</string>
     <string name="dolby_medium">Médio</string>
     <string name="dolby_high">Alto</string>
     <string name="dolby_max">Máximo</string>
     <string name="dolby_unknown">Desconhecido</string>
-    <string name="dolby_on_with_profile">Ligado (%1$s)</string>
-    <string name="dolby_category_settings">Configurações</string>
+    <string name="dolby_on_with_profile">Ativado · %1$s</string>
+    <string name="dolby_category_eq">Equalizador</string>
+    <string name="dolby_category_audio">Sons</string>
+    <string name="dolby_category_headphones">Fones de ouvido</string>
     <string name="dolby_bass_enhancer">Reforço de graves</string>
-    <string name="dolby_dialogue_enhancer">Reforço de diálogo</string>
-    <string name="dolby_spk_virtualizer">Virtualização de alto-falante</string>
-    <string name="dolby_hp_virtualizer">Virtualização de fone de ouvido</string>
-    <string name="dolby_stereo_widening">Ampliação estéreo</string>
-    <string name="dolby_volume_leveler">Nivelador de volume</string>
-    <string name="dolby_connect_headphones">Conectar fones de ouvido</string>
-    <string name="dolby_reset_profile">Redefinir para os padrões</string>
-    <string name="dolby_reset_profile_toast">Configurações redefinidas com sucesso para o perfil %1$s</string>
+    <string name="dolby_dialogue_enhancer">Realce de diálogos</string>
+    <string name="dolby_spk_virtualizer">Som surround para alto-falantes</string>
+    <string name="dolby_hp_virtualizer">Som surround para fones de ouvido</string>
+    <string name="dolby_stereo_widening">Expansão estéreo</string>
+    <string name="dolby_volume_leveler">Nivelamento de volume</string>
+    <string name="dolby_connect_headphones">Conecte os fones de ouvido</string>
+    <string name="dolby_reset_profile">Restaurar configurações</string>
+    <string name="dolby_reset_profile_toast">Configurações de %1$s restauradas</string>
+    <string name="dolby_reset_confirm_title">Restaurar configurações?</string>
+    <string name="dolby_reset_confirm_message">As configurações de %1$s serão restauradas aos valores padrão.</string>
+    <string name="dolby_reset_confirm_action">Restaurar</string>
 
-    <!-- Perfis Dolby -->
+    <!-- Dolby profiles -->
     <string name="dolby_profile_dynamic">Dinâmico</string>
-    <string name="dolby_profile_video">Filme/Vídeo</string>
+    <string name="dolby_profile_video">Filmes e vídeos</string>
     <string name="dolby_profile_music">Música</string>
     <string name="dolby_profile_voice">Voz</string>
     <string name="dolby_profile_custom">Personalizado</string>
 
-    <!-- Predefinições do equalizador Dolby -->
-    <string name="dolby_preset_default">Plano (desligado)</string>
+    <!-- Dolby equalizer presets -->
+    <string name="dolby_preset_default">Plano</string>
     <string name="dolby_preset_rock">Rock</string>
     <string name="dolby_preset_jazz">Jazz</string>
     <string name="dolby_preset_pop">Pop</string>
     <string name="dolby_preset_classical">Clássica</string>
-    <string name="dolby_preset_hiphop">Hip Hop</string>
+    <string name="dolby_preset_hiphop">Hip-hop</string>
     <string name="dolby_preset_blues">Blues</string>
     <string name="dolby_preset_electronic">Eletrônica</string>
     <string name="dolby_preset_country">Country</string>
     <string name="dolby_preset_dance">Dance</string>
     <string name="dolby_preset_metal">Metal</string>
 
-    <!-- Interface do equalizador Dolby -->
-    <string name="dolby_geq_slider_label_gain">Ganho</string>
+    <!-- Dolby equalizer UI -->
     <string name="dolby_geq_preset">Predefinição</string>
     <string name="dolby_geq_preset_name">Nome da predefinição</string>
-    <string name="dolby_geq_new_preset">Nova predefinição</string>
-    <string name="dolby_geq_rename_preset">Renomear predefinição</string>
+    <string name="dolby_geq_new_preset">Criar predefinição</string>
+    <string name="dolby_geq_rename_preset">Renomear</string>
     <string name="dolby_geq_delete_preset">Excluir predefinição</string>
     <string name="dolby_geq_delete_preset_prompt">Deseja excluir esta predefinição?</string>
-    <string name="dolby_geq_reset_gains">Redefinir ganhos</string>
-    <string name="dolby_geq_reset_gains_prompt">Deseja redefinir esta predefinição para os padrões?</string>
-    <string name="dolby_geq_preset_name_exists">O nome da predefinição já existe!</string>
-    <string name="dolby_geq_preset_name_too_long">O nome da predefinição é muito longo!</string>
+    <string name="dolby_geq_reset_gains">Restaurar níveis</string>
+    <string name="dolby_geq_reset_gains_prompt">Deseja restaurar os níveis de equalização aos valores padrão?</string>
+    <string name="dolby_geq_preset_name_exists">Já existe uma predefinição com esse nome.</string>
+    <string name="dolby_geq_preset_name_too_long">O nome excede o limite de caracteres.</string>
 
-    <!-- Equalizador inteligente Dolby -->
-    <string name="dolby_ieq">Equalizador inteligente</string>
+    <!-- Dolby intelligent EQ -->
+    <string name="dolby_ieq">Equalização inteligente</string>
     <string name="dolby_balanced">Equilibrado</string>
-    <string name="dolby_warm">Quente</string>
+    <string name="dolby_warm">Acolhedor</string>
     <string name="dolby_detailed">Detalhado</string>
 
 </resources>

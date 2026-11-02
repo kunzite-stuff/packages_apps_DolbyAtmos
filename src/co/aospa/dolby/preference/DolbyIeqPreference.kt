@@ -10,12 +10,12 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.ImageView
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.preference.ListPreference
 import androidx.preference.PreferenceViewHolder
 import co.aospa.dolby.R
 
-// Preference with icon on the right side
-class DolbyIeqPreference(context: Context, attrs: AttributeSet?) : ListPreference(context, attrs) {
+// Preference with icon on the right side, using the list dialog from DolbyListPreference
+class DolbyIeqPreference(context: Context, attrs: AttributeSet?) :
+    DolbyListPreference(context, attrs) {
 
     init {
         widgetLayoutResource = R.layout.ieq_icon_layout

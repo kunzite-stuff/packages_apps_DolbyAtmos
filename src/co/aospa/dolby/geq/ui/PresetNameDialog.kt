@@ -7,12 +7,12 @@
 package co.aospa.dolby.geq.ui
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AlertDialog
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,47 +38,39 @@ fun PresetNameDialog(
     var text by remember { mutableStateOf(presetName) }
     var error by remember { mutableStateOf<PresetNameValidationError?>(null) }
 
-    AlertDialog(
+    DolbyDialog(
         onDismissRequest = { showDialog = false },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onPresetNameSet(text)?.let {
-                        // validation failed
-                        error = it
-                        return@TextButton
-                    }
-                    // succeeded
-                    showDialog = false
-                    error = null
-                }
-            ) {
-                Text(stringResource(id = android.R.string.ok))
+        title = title,
+        confirmText = stringResource(id = android.R.string.ok),
+        onConfirm = {
+            val validationError = onPresetNameSet(text)
+            if (validationError != null) {
+                // validation failed
+                error = validationError
+            } else {
+                // succeeded
+                showDialog = false
+                error = null
             }
         },
-        dismissButton = {
-            TextButton(onClick = { showDialog = false }) {
-                Text(stringResource(id = android.R.string.cancel))
-            }
-        },
-        title = { Text(title) },
-        text = {
-            Column {
-                OutlinedTextField(
-                    value = text,
-                    onValueChange = { text = it },
-                    label = { Text(stringResource(id = R.string.dolby_geq_preset_name)) },
-                    isError = error != null,
-                    singleLine = true,
+    ) {
+        Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+            OutlinedTextField(
+                value = text,
+                onValueChange = { text = it },
+                label = { Text(stringResource(id = R.string.dolby_geq_preset_name)) },
+                isError = error != null,
+                singleLine = true,
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier.fillMaxWidth(),
+            )
+            error?.let {
+                Text(
+                    text = it.toErrorMessage(),
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(top = 8.dp),
                 )
-                error?.let {
-                    Text(
-                        text = it.toErrorMessage(),
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.padding(top = 8.dp),
-                    )
-                }
             }
-        },
-    )
+        }
+    }
 }

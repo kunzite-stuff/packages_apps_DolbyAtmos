@@ -6,12 +6,16 @@
 
 package co.aospa.dolby.preference
 
+import android.app.AlertDialog
 import android.media.AudioAttributes
 import android.media.AudioDeviceCallback
 import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
+import android.view.View
+import android.view.WindowInsets
 import android.widget.Toast
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -42,7 +46,7 @@ class DolbySettingsFragment : SettingsBasePreferenceFragment(), OnPreferenceChan
 
     private val switchBar by lazy { findPreference<MainSwitchPreference>(PREF_ENABLE)!! }
     private val profilePref by lazy { findPreference<ListPreference>(PREF_PROFILE)!! }
-    private val presetPref by lazy { findPreference<Preference>(PREF_PRESET)!! }
+    private val presetPref by lazy { findPreference<DolbyGeqPreference>(PREF_PRESET)!! }
     private val ieqPref by lazy { findPreference<DolbyIeqPreference>(PREF_IEQ)!! }
     private val dialoguePref by lazy { findPreference<ListPreference>(PREF_DIALOGUE)!! }
     private val bassPref by lazy { findPreference<SwitchPreferenceCompat>(PREF_BASS)!! }
@@ -51,8 +55,9 @@ class DolbySettingsFragment : SettingsBasePreferenceFragment(), OnPreferenceChan
         findPreference<SwitchPreferenceCompat>(PREF_SPK_VIRTUALIZER)!!
     }
     private val resetPref by lazy { findPreference<Preference>(PREF_RESET)!! }
-    private val settingsCategory by lazy {
-        findPreference<PreferenceCategory>("dolby_category_settings")!!
+    private val audioCategory by lazy { findPreference<PreferenceCategory>(CATEGORY_AUDIO)!! }
+    private val headphonesCategory by lazy {
+        findPreference<PreferenceCategory>(CATEGORY_HEADPHONES)!!
     }
     private var stereoPref: ListPreference? = null
     private var volumePref: SwitchPreferenceCompat? = null
@@ -61,7 +66,7 @@ class DolbySettingsFragment : SettingsBasePreferenceFragment(), OnPreferenceChan
     private val audioManager by lazy {
         requireContext().getSystemService(AudioManager::class.java)!!
     }
-    private val handler = Handler()
+    private val handler = Handler(Looper.getMainLooper())
 
     private var isOnSpeaker = true
         set(value) {
@@ -90,13 +95,13 @@ class DolbySettingsFragment : SettingsBasePreferenceFragment(), OnPreferenceChan
 
         stereoPref = findPreference<ListPreference>(PREF_STEREO)!!
         if (!resources.getBoolean(R.bool.dolby_stereo_widening_supported)) {
-            settingsCategory.removePreference(stereoPref!!)
+            headphonesCategory.removePreference(stereoPref!!)
             stereoPref = null
         }
 
         volumePref = findPreference<SwitchPreferenceCompat>(PREF_VOLUME)!!
         if (!resources.getBoolean(R.bool.dolby_volume_leveler_supported)) {
-            settingsCategory.removePreference(volumePref!!)
+            audioCategory.removePreference(volumePref!!)
             volumePref = null
         }
 
@@ -118,20 +123,28 @@ class DolbySettingsFragment : SettingsBasePreferenceFragment(), OnPreferenceChan
         ieqPref.onPreferenceChangeListener = this
 
         resetPref.setOnPreferenceClickListener {
-            dolbyController.resetProfileSpecificSettings()
-            updateProfileSpecificPrefs()
-            Toast.makeText(
-                    requireContext(),
-                    getString(R.string.dolby_reset_profile_toast, profilePref.summary),
-                    Toast.LENGTH_SHORT,
-                )
-                .show()
+            showResetConfirmation()
             true
         }
 
         audioManager.registerAudioDeviceCallback(audioDeviceCallback, handler)
         updateSpeakerState()
         updateProfileSpecificPrefs()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Edge-to-edge: keep the last item clear of the gesture/navigation bar.
+        val list = listView
+        list.clipToPadding = false
+        val basePaddingBottom = list.paddingBottom
+        list.setOnApplyWindowInsetsListener { v, insets ->
+            val navBottom = insets.getInsets(WindowInsets.Type.navigationBars()).bottom
+            v.setPadding(v.paddingLeft, v.paddingTop, v.paddingRight, basePaddingBottom + navBottom)
+            insets
+        }
+        list.requestApplyInsets()
     }
 
     override fun onDestroyView() {
@@ -194,9 +207,30 @@ class DolbySettingsFragment : SettingsBasePreferenceFragment(), OnPreferenceChan
         return true
     }
 
+    private fun showResetConfirmation() {
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.dolby_reset_confirm_title)
+            .setMessage(getString(R.string.dolby_reset_confirm_message, profilePref.summary))
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton(R.string.dolby_reset_confirm_action) { _, _ ->
+                dolbyController.resetProfileSpecificSettings()
+                updateProfileSpecificPrefs()
+                Toast.makeText(
+                        requireContext(),
+                        getString(R.string.dolby_reset_profile_toast, profilePref.summary),
+                        Toast.LENGTH_SHORT,
+                    )
+                    .show()
+            }
+            .show()
+    }
+
+    private fun parseGains(preset: String): IntArray =
+        preset.split(",").mapNotNull { it.trim().toIntOrNull() }.toIntArray()
+
     private fun updateSpeakerState() {
-        val device = audioManager.getDevicesForAttributes(ATTRIBUTES_MEDIA)[0]
-        isOnSpeaker = (device.type == AudioDeviceInfo.TYPE_BUILTIN_SPEAKER)
+        val device = audioManager.getDevicesForAttributes(ATTRIBUTES_MEDIA).firstOrNull()
+        isOnSpeaker = device == null || device.type == AudioDeviceInfo.TYPE_BUILTIN_SPEAKER
     }
 
     private fun updateProfileSpecificPrefs() {
@@ -236,6 +270,7 @@ class DolbySettingsFragment : SettingsBasePreferenceFragment(), OnPreferenceChan
         if (!enable) return
 
         presetPref.summary = dolbyController.getPresetName()
+        presetPref.gains = parseGains(dolbyController.getPreset(currentProfile))
 
         val ieqValue = dolbyController.getIeqPreset(currentProfile)
         ieqPref.apply {
@@ -301,6 +336,8 @@ class DolbySettingsFragment : SettingsBasePreferenceFragment(), OnPreferenceChan
 
     companion object {
         private const val TAG = "DolbySettingsFragment"
+        private const val CATEGORY_AUDIO = "dolby_category_audio"
+        private const val CATEGORY_HEADPHONES = "dolby_category_headphones"
         private val ATTRIBUTES_MEDIA =
             AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).build()
     }

@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,6 +28,10 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.aospa.dolby.geq.data.BandGain
+import kotlin.math.roundToInt
+
+// The gain goes from -10 to +10 dB in 1 dB steps, which gives 19 stops between the two ends.
+private const val GAIN_STEPS = 19
 
 @Composable
 fun BandGainSlider(bandGain: BandGain, onValueChangeFinished: (Int) -> Unit) {
@@ -36,12 +42,18 @@ fun BandGainSlider(bandGain: BandGain, onValueChangeFinished: (Int) -> Unit) {
     var sliderPosition by remember(bandGain.gain) { mutableFloatStateOf(bandGain.gain / 100f) }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        SliderText("%.1f".format(sliderPosition * 10f))
         Slider(
             value = sliderPosition,
             onValueChange = { sliderPosition = it },
-            onValueChangeFinished = { onValueChangeFinished((sliderPosition * 100f).toInt()) },
+            onValueChangeFinished = { onValueChangeFinished((sliderPosition * 100f).roundToInt()) },
             valueRange = -1f..1f,
+            // Stop indicators (dots) along the track, one per dB
+            steps = GAIN_STEPS,
+            colors =
+                SliderDefaults.colors(
+                    activeTickColor = MaterialTheme.colorScheme.onPrimary,
+                    inactiveTickColor = MaterialTheme.colorScheme.primary,
+                ),
             modifier =
                 Modifier.graphicsLayer {
                         rotationZ = 270f
