@@ -27,6 +27,10 @@ internal class DolbyController private constructor(private val context: Context)
     private val volumeLevelerSupported =
         context.getResources().getBoolean(R.bool.dolby_volume_leveler_supported)
 
+    // True while the whole state is being pushed to a freshly created effect, so the setters used
+    // for that don't try to recreate it again.
+    private var restoring = false
+
     // Restore current profile on every media session
     private val playbackCallback =
         object : AudioPlaybackCallback() {
@@ -69,7 +73,10 @@ internal class DolbyController private constructor(private val context: Context)
         }
 
     var dsOn: Boolean
-        get() = dolbyEffect.dsOn.also { dlog(TAG, "getDsOn: $it") }
+        get() {
+            checkEffect()
+            return dolbyEffect.dsOn.also { dlog(TAG, "getDsOn: $it") }
+        }
         set(value) {
             dlog(TAG, "setDsOn: $value")
             checkEffect()
@@ -79,7 +86,10 @@ internal class DolbyController private constructor(private val context: Context)
         }
 
     var profile: Int
-        get() = dolbyEffect.profile.also { dlog(TAG, "getProfile: $it") }
+        get() {
+            checkEffect()
+            return dolbyEffect.profile.also { dlog(TAG, "getProfile: $it") }
+        }
         set(value) {
             dlog(TAG, "setProfile: $value")
             checkEffect()
@@ -92,7 +102,12 @@ internal class DolbyController private constructor(private val context: Context)
 
     fun onBootCompleted() {
         dlog(TAG, "onBootCompleted")
+        restoreAll()
+    }
 
+    // Pushes everything we persisted to the effect: enabled state, the settings of every profile
+    // and the current profile.
+    private fun restoreAll() {
         // Restore our main settings
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         dsOn = prefs.getBoolean(DolbyConstants.PREF_ENABLE, true)
@@ -157,11 +172,26 @@ internal class DolbyController private constructor(private val context: Context)
         }
     }
 
+    // The effect can be lost (control taken, audio server or HAL restarted). When that happens a
+    // new effect is created, which starts disabled and with factory settings, so everything is
+    // pushed to it again.
     private fun checkEffect() {
-        if (!dolbyEffect.hasControl()) {
-            Log.w(TAG, "lost control, recreating effect")
+        if (restoring || dolbyEffect.isHealthy()) return
+
+        Log.w(TAG, "effect lost or unreachable, recreating and restoring it")
+        try {
             dolbyEffect.release()
             dolbyEffect = DolbyAudioEffect(EFFECT_PRIORITY, audioSession = 0)
+        } catch (e: Exception) {
+            Log.e(TAG, "failed to recreate the effect", e)
+            return
+        }
+
+        restoring = true
+        try {
+            restoreAll()
+        } finally {
+            restoring = false
         }
     }
 

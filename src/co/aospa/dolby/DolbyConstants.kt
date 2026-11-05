@@ -60,5 +60,21 @@ class DolbyConstants {
                 Log.d("$TAG-$tag", msg)
             }
         }
+
+        fun elog(tag: String, msg: String, tr: Throwable? = null) {
+            if (tr != null) {
+                Log.e("$TAG-$tag", msg, tr)
+            } else {
+                Log.e("$TAG-$tag", msg)
+            }
+        }
+
+        fun wlog(tag: String, msg: String, tr: Throwable? = null) {
+            if (tr != null) {
+                Log.w("$TAG-$tag", msg, tr)
+            } else {
+                Log.w("$TAG-$tag", msg)
+            }
+        }
     }
 }
